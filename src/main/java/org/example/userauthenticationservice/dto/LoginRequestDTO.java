@@ -1,11 +1,11 @@
-package org.example.userauthenticationservice_sept2024.dto;
+package org.example.userauthenticationservice.dto;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class SignUpRequestDTO {
+public class LoginRequestDTO {
     private String email;
     private String password;
 }

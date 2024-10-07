@@ -1,4 +1,4 @@
-package org.example.userauthenticationservice_sept2024.models;
+package org.example.userauthenticationservice.models;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

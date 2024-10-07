@@ -1,4 +1,4 @@
-package org.example.userauthenticationservice_sept2024.models;
+package org.example.userauthenticationservice.models;
 
 public enum UserAuthenticationStatus {
     SUCCESS,

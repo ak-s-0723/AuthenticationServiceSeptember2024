@@ -1,10 +1,10 @@
-package org.example.userauthenticationservice_sept2024.services;
+package org.example.userauthenticationservice.services;
 
-import org.example.userauthenticationservice_sept2024.exceptions.UserAlreadyExistsException;
-import org.example.userauthenticationservice_sept2024.exceptions.UserNotFoundException;
-import org.example.userauthenticationservice_sept2024.exceptions.WrongPasswordException;
-import org.example.userauthenticationservice_sept2024.models.User;
-import org.example.userauthenticationservice_sept2024.repositories.UserRepository;
+import org.example.userauthenticationservice.exceptions.UserAlreadyExistsException;
+import org.example.userauthenticationservice.exceptions.UserNotFoundException;
+import org.example.userauthenticationservice.exceptions.WrongPasswordException;
+import org.example.userauthenticationservice.models.User;
+import org.example.userauthenticationservice.repositories.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 

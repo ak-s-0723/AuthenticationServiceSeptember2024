@@ -1,8 +1,8 @@
-package org.example.userauthenticationservice_sept2024.dto;
+package org.example.userauthenticationservice.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.example.userauthenticationservice_sept2024.models.UserAuthenticationStatus;
+import org.example.userauthenticationservice.models.UserAuthenticationStatus;
 
 @Getter
 @Setter

@@ -1,11 +1,11 @@
-package org.example.userauthenticationservice_sept2024.controllers;
+package org.example.userauthenticationservice.controllers;
 
-import org.example.userauthenticationservice_sept2024.dto.LoginRequestDTO;
-import org.example.userauthenticationservice_sept2024.dto.LoginResponseDTO;
-import org.example.userauthenticationservice_sept2024.dto.SignUpRequestDTO;
-import org.example.userauthenticationservice_sept2024.dto.SignUpResponseDTO;
-import org.example.userauthenticationservice_sept2024.models.UserAuthenticationStatus;
-import org.example.userauthenticationservice_sept2024.services.IAuthService;
+import org.example.userauthenticationservice.dto.LoginRequestDTO;
+import org.example.userauthenticationservice.dto.LoginResponseDTO;
+import org.example.userauthenticationservice.dto.SignUpRequestDTO;
+import org.example.userauthenticationservice.dto.SignUpResponseDTO;
+import org.example.userauthenticationservice.models.UserAuthenticationStatus;
+import org.example.userauthenticationservice.services.IAuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

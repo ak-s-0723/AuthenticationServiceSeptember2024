@@ -1,4 +1,4 @@
-package org.example.userauthenticationservice_sept2024.services;
+package org.example.userauthenticationservice.services;
 
 public interface IAuthService {
     boolean signUp(String email, String password);

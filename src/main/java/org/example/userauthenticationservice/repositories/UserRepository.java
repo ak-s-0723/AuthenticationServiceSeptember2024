@@ -1,6 +1,6 @@
-package org.example.userauthenticationservice_sept2024.repositories;
+package org.example.userauthenticationservice.repositories;
 
-import org.example.userauthenticationservice_sept2024.models.User;
+import org.example.userauthenticationservice.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
