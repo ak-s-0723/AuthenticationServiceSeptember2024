@@ -19,7 +19,9 @@ public class AuthService {
         }
         User user = new User();
         user.setEmail(email);
-        user.setPassword(password);
+        BCrypt.Hasher hasher = BCrypt.withDefaults();
+        String hashedPassword = hasher.hashToString(5, password.toCharArray());
+        user.setPassword(hashedPassword);
         userRepository.save(user);
         return true;
     }
