@@ -19,4 +19,10 @@ public class AuthService {
         userRepository.save(user);
         return true;
     }
+
+    public boolean login(String email, String password) {
+        return userRepository.findByEmail(email)
+                .map(user -> user.getPassword().equals(password))
+                .orElse(false);
+    }
 }
