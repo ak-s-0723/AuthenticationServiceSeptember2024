@@ -5,6 +5,8 @@ import org.example.userauthenticationservice_sept2024.dto.LoginRequestDto;
 import org.example.userauthenticationservice_sept2024.dto.LoginResponseDto;
 import org.example.userauthenticationservice_sept2024.dto.SignUpRequestDto;
 import org.example.userauthenticationservice_sept2024.dto.SignUpResponseDto;
+import org.example.userauthenticationservice_sept2024.exception.UserAlreadyExistsException;
+import org.example.userauthenticationservice_sept2024.exception.UserNotFoundException;
 import org.example.userauthenticationservice_sept2024.exception.WrongPasswordException;
 import org.example.userauthenticationservice_sept2024.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.swing.*;
-
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -24,7 +24,7 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/sign_up")
-    public ResponseEntity<SignUpResponseDto> signUp(@RequestBody SignUpRequestDto request ) {
+    public ResponseEntity<SignUpResponseDto> signUp(@RequestBody SignUpRequestDto request ) throws UserAlreadyExistsException {
         SignUpResponseDto response = new SignUpResponseDto();
 
        try {
@@ -42,7 +42,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto request) {
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto request) throws UserNotFoundException {
         LoginResponseDto response = new LoginResponseDto();
         try {
             try {

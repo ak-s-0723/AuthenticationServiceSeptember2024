@@ -1,16 +1,18 @@
 package org.example.userauthenticationservice_sept2024.service;
 
-import com.amazonaws.services.elasticache.model.UserAlreadyExistsException;
-import com.amazonaws.services.elasticache.model.UserNotFoundException;
+import org.example.userauthenticationservice_sept2024.exception.UserAlreadyExistsException;
+import org.example.userauthenticationservice_sept2024.exception.UserNotFoundException;
 import org.example.userauthenticationservice_sept2024.exception.WrongPasswordException;
 import org.example.userauthenticationservice_sept2024.model.User;
 import org.example.userauthenticationservice_sept2024.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
 public class AuthService {
+    @Autowired
     private UserRepository userRepository;
 
     public AuthService(UserRepository userRepository) {
@@ -38,7 +40,11 @@ public class AuthService {
             throw new UserNotFoundException("User with "+email+" not exists");
         }
         var matches = password.equals(user.get().getPassword());
-        if(matches) return email + ":" + password;
-        else throw new WrongPasswordException("Wrong password");
+        if(matches){
+            return email + ":" + password;
+        }
+        else {
+            throw new WrongPasswordException("Wrong password");
+        }
     }
 }
