@@ -5,11 +5,14 @@ import org.example.userauthenticationservice_sept2024.exceptions.UserNotFoundExc
 import org.example.userauthenticationservice_sept2024.exceptions.WrongPasswordException;
 import org.example.userauthenticationservice_sept2024.models.User;
 import org.example.userauthenticationservice_sept2024.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
     private UserRepository userRepository;
+    @Autowired
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     public AuthService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -19,8 +22,7 @@ public class AuthService {
         }
         User user = new User();
         user.setEmail(email);
-        BCrypt.Hasher hasher = BCrypt.withDefaults();
-        String hashedPassword = hasher.hashToString(5, password.toCharArray());
+        String hashedPassword = passwordEncoder.encode(password);
         user.setPassword(hashedPassword);
         userRepository.save(user);
         return true;
@@ -30,7 +32,7 @@ public class AuthService {
         if(user.isEmpty()){
             throw new UserNotFoundException();
         }
-        var matches = password.equals(user.get().getPassword());
+        var matches = passwordEncoder.matches(password, user.getPassword();
         if(matches) return email + ":" + password;
         else throw new WrongPasswordException("Wrong password");
     }
