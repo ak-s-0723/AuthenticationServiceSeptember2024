@@ -5,6 +5,7 @@ import org.example.userauthenticationservice_sept2024.exception.UserNotFoundExce
 import org.example.userauthenticationservice_sept2024.exception.WrongPasswordException;
 import org.example.userauthenticationservice_sept2024.models.User;
 import org.example.userauthenticationservice_sept2024.repositories.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -13,6 +14,8 @@ import java.util.Optional;
 public class AuthService {
 
     private final UserRepository userRepository;
+
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public AuthService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -29,17 +32,18 @@ public class AuthService {
         return true;
     }
 
-    public boolean login(String email, String password) throws UserNotFoundException {
+    public String login(String email, String password) throws UserNotFoundException {
         Optional<User> userOptional = userRepository.findByEmail(email);
         if (userOptional.isEmpty()) {
             throw new UserNotFoundException("User with email: " + email + " not found");
         }
-        boolean matches = password.equals(userOptional.get().getPassword());
-        if (matches) {
-            return true;
+        User user = userOptional.get();
+        if (passwordEncoder.matches(password, user.getPassword())) {
+            return email + ":" + password;
         } else {
             throw new WrongPasswordException("Wrong password.");
         }
     }
+
 
 }

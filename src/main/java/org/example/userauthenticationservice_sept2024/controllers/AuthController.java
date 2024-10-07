@@ -37,8 +37,9 @@ public class AuthController {
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto request) {
         LoginResponseDto response = new LoginResponseDto();
         try {
-            authService.login(request.getEmail(), request.getPassword());
+            String token = authService.login(request.getEmail(), request.getPassword());
             response.setRequestStatus(RequestStatus.SUCCESS);
+            response.setToken(token);
             return new ResponseEntity<>(
                     response, HttpStatus.OK
             );
