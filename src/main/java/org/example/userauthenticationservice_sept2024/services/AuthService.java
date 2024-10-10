@@ -16,7 +16,8 @@ public class AuthService implements IAuthService {
 
     @Autowired
     UserRepository userRepository;
-    BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     public User signup(User user) {
