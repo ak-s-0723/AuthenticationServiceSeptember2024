@@ -5,13 +5,20 @@ import org.example.userauthenticationservice_sept2024.exception.UserNotFoundExce
 import org.example.userauthenticationservice_sept2024.exception.WrongPasswordException;
 import org.example.userauthenticationservice_sept2024.models.User;
 import org.example.userauthenticationservice_sept2024.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
 public class AuthService {
+    @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     public AuthService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -22,7 +29,8 @@ public class AuthService {
         }
         User user = new User();
         user.setEmail(email);
-        user.setPassword(password);
+        String encodedPassword = bCryptPasswordEncoder.encode(password);
+        user.setPassword(encodedPassword);
         userRepository.save(user);
 
         return true;
@@ -33,12 +41,19 @@ public class AuthService {
         Optional<User> userOptional = userRepository.findByEmail(email);
         if(userOptional.isEmpty()) {
             throw new UserNotFoundException("User with email: " + email + " not found"); }
-        boolean matches = password.equals(userOptional.get().getPassword());
+        boolean matches = bCryptPasswordEncoder.matches(password,userOptional.get().getPassword());//password.equals(userOptional.get().getPassword());
         if(matches){
             return true;
         }else{
             throw new WrongPasswordException("Wrong Password.");
         }
+//        User user = userOptional.get();
+//        if(password.equals(user.getPassword())) {
+//            String token = email + ":" + password;
+//            return token;
+//        }else{
+//            throw new WrongPasswordException("Wrong password");
+//        }
         //return false;
     }
 }
