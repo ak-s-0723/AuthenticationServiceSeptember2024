@@ -1,24 +1,10 @@
 package org.example.userauthenticationservice_sept2024.services;
 
-import org.example.userauthenticationservice_sept2024.models.User;
-import org.example.userauthenticationservice_sept2024.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.example.userauthenticationservice_sept2024.exceptions.UserAlreadyExistsException;
+import org.example.userauthenticationservice_sept2024.exceptions.UserNotFoundException;
+import org.example.userauthenticationservice_sept2024.exceptions.WrongPasswordException;
 
-@Service
-public class AuthService {
-    @Autowired
-    private UserRepository userRepository;
-
-    public boolean signIn(String username, String password) throws Exception {
-        if(userRepository.findByEmail(username).isPresent()){
-            throw new Exception();
-        }
-
-        User user = new User();
-        user.setEmail(username);
-        user.setPassword(password);
-        userRepository.save(user);
-        return true;
-    }
+public interface AuthService {
+    boolean signUp(String username, String password) throws UserAlreadyExistsException;
+    String login(String email, String password) throws UserNotFoundException, WrongPasswordException;
 }
