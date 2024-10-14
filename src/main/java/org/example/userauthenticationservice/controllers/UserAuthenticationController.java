@@ -6,8 +6,11 @@ import org.example.userauthenticationservice.dto.SignUpRequestDTO;
 import org.example.userauthenticationservice.dto.SignUpResponseDTO;
 import org.example.userauthenticationservice.models.UserAuthenticationStatus;
 import org.example.userauthenticationservice.services.IAuthService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,8 +51,12 @@ public class UserAuthenticationController {
             String authToken = userAuthenticationService.login(loginRequestDTO.getEmail(), loginRequestDTO.getPassword());
             responseDTO.setUserAuthenticationStatus(UserAuthenticationStatus.SUCCESS);
             responseDTO.setAuthToken(authToken);
-            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+            headers.add(HttpHeaders.SET_COOKIE, authToken);
+
+            return new ResponseEntity<>(responseDTO, headers, HttpStatus.OK);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             responseDTO.setUserAuthenticationStatus(UserAuthenticationStatus.FAILURE);
             return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
         }
