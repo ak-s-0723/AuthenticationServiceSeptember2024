@@ -6,15 +6,17 @@ import org.example.userauthenticationservice_sept2024.exceptions.WrongPasswordEx
 import org.example.userauthenticationservice_sept2024.models.User;
 import org.example.userauthenticationservice_sept2024.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
     private UserRepository userRepository;
     @Autowired
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    public AuthService(UserRepository userRepository) {
+    private final BCryptPasswordEncoder passwordEncoder;
+    public AuthService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
     public boolean signUp(String email, String password) throws UserAlreadyExistsException,WrongPasswordException {
         if(userRepository.findByEmail(email).isPresent()){
@@ -32,7 +34,7 @@ public class AuthService {
         if(user.isEmpty()){
             throw new UserNotFoundException();
         }
-        var matches = passwordEncoder.matches(password, user.getPassword();
+        var matches = passwordEncoder.matches(password, user.get().getPassword());
         if(matches) return email + ":" + password;
         else throw new WrongPasswordException("Wrong password");
     }
