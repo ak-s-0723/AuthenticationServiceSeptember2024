@@ -1,5 +1,8 @@
 package org.example.userauthenticationservice_sept2024.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.MacAlgorithm;
 import org.example.userauthenticationservice_sept2024.exceptions.UserAlreadyExistsException;
 import org.example.userauthenticationservice_sept2024.exceptions.UserNotFoundException;
 import org.example.userauthenticationservice_sept2024.exceptions.WrongPasswordException;
@@ -8,6 +11,10 @@ import org.example.userauthenticationservice_sept2024.repositories.UserRepositor
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.crypto.SecretKey;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class AuthService {
@@ -35,7 +42,21 @@ public class AuthService {
             throw new UserNotFoundException();
         }
         var matches = passwordEncoder.matches(password, user.get().getPassword());
-        if(matches) return email + ":" + password;
+        if(matches) {
+            //var message = email + ":" + password;
+            Map<String,Object> claims = new HashMap<>();
+            claims.put("iat",System.currentTimeMillis());
+            claims.put("exp", System.currentTimeMillis()+846000);
+            claims.put("email", user.get().getEmail());
+            claims.put("user_id",user.get().getId());
+            claims.put("issuer","scaler");
+            //byte[] content = message.getBytes();
+            MacAlgorithm algorithm = Jwts.SIG.HS256;
+            SecretKey secretKey = algorithm.key().build();
+            return Jwts.builder().claims(claims).signWith(secretKey).compact();
+        }
         else throw new WrongPasswordException("Wrong password");
     }
+
+    //JWT gen
 }
