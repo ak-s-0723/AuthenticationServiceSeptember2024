@@ -1,9 +1,6 @@
 package org.example.userauthenticationservice_sept2024.controllers;
 
-import org.example.userauthenticationservice_sept2024.dtos.LoginResponseDto;
-import org.example.userauthenticationservice_sept2024.dtos.RequestStatus;
-import org.example.userauthenticationservice_sept2024.dtos.SignUpRequestDto;
-import org.example.userauthenticationservice_sept2024.dtos.SignUpResponseDto;
+import org.example.userauthenticationservice_sept2024.dtos.*;
 import org.example.userauthenticationservice_sept2024.exceptions.UserAlreadyExistsException;
 import org.example.userauthenticationservice_sept2024.exceptions.WrongPasswordException;
 import org.example.userauthenticationservice_sept2024.services.AuthService;
@@ -55,5 +52,9 @@ public class AuthController {
             response.setRequestStatus(RequestStatus.FAILURE);
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
+    }
+    @PostMapping("/validateToken")
+    public boolean validateToken(@RequestBody ValidateTokenDto tokenDto) {
+        return authService.validateToken(tokenDto.getUserId(), tokenDto.getToken());
     }
 }

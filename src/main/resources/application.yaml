@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: UserAuthenticationService_Sept2024
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  datasource:
+    url: jdbc:mysql://localhost:3306/user
+    username: root
+    password: MySql!@#123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+server:
+  port: 9000
+
+logging:
+  level:
+    org.springframework.security: trace

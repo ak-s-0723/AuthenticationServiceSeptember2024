@@ -3,10 +3,14 @@ package org.example.userauthenticationservice_sept2024.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.MacAlgorithm;
+import jakarta.transaction.Transactional;
 import org.example.userauthenticationservice_sept2024.exceptions.UserAlreadyExistsException;
 import org.example.userauthenticationservice_sept2024.exceptions.UserNotFoundException;
 import org.example.userauthenticationservice_sept2024.exceptions.WrongPasswordException;
+import org.example.userauthenticationservice_sept2024.models.Session;
+import org.example.userauthenticationservice_sept2024.models.SessionState;
 import org.example.userauthenticationservice_sept2024.models.User;
+import org.example.userauthenticationservice_sept2024.repositories.SessionRepository;
 import org.example.userauthenticationservice_sept2024.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,6 +25,10 @@ public class AuthService {
     private UserRepository userRepository;
     @Autowired
     private final BCryptPasswordEncoder passwordEncoder;
+    @Autowired
+    private SessionRepository sessionRepository;
+    @Autowired
+    SecretKey secretKey;
     public AuthService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -36,6 +44,7 @@ public class AuthService {
         userRepository.save(user);
         return true;
     }
+    @Transactional
     public String login(String email, String password) throws UserNotFoundException, WrongPasswordException {
         var user = userRepository.findByEmail(email);
         if(user.isEmpty()){
@@ -51,12 +60,28 @@ public class AuthService {
             claims.put("user_id",user.get().getId());
             claims.put("issuer","scaler");
             //byte[] content = message.getBytes();
-            MacAlgorithm algorithm = Jwts.SIG.HS256;
-            SecretKey secretKey = algorithm.key().build();
-            return Jwts.builder().claims(claims).signWith(secretKey).compact();
+            var token = Jwts.builder().claims(claims).signWith(secretKey).compact();
+            Session session = new Session();
+            session.setUser(user.get());
+            session.setToken(token);
+            session.setSessionState(SessionState.ACTIVE);
+            sessionRepository.save(session);
+            return token;
         }
         else throw new WrongPasswordException("Wrong password");
     }
 
     //JWT gen
+    public boolean validateToken(Long userId,String token){
+        var session = sessionRepository.findByTokenAndUser_Id(token,userId);
+        if(session.isEmpty()) return false;
+        var parsedToken = Jwts.parser().verifyWith(secretKey).build();
+        var claims = parsedToken.parseSignedClaims(token).getPayload();
+        Long exp = (Long) claims.get("exp");
+        if(System.currentTimeMillis()>exp){
+            session.get().setSessionState(SessionState.EXPIRED);
+            return false;
+        }
+        return true;
+    }
 }
