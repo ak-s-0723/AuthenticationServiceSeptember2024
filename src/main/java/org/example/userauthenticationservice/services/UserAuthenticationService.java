@@ -1,18 +1,20 @@
 package org.example.userauthenticationservice.services;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.MacAlgorithm;
 import org.example.userauthenticationservice.exceptions.UserAlreadyExistsException;
 import org.example.userauthenticationservice.exceptions.UserNotFoundException;
 import org.example.userauthenticationservice.exceptions.WrongPasswordException;
+import org.example.userauthenticationservice.models.Session;
+import org.example.userauthenticationservice.models.SessionState;
 import org.example.userauthenticationservice.models.User;
+import org.example.userauthenticationservice.repositories.SessionRepository;
 import org.example.userauthenticationservice.repositories.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -21,10 +23,19 @@ import java.util.Optional;
 public class UserAuthenticationService implements IAuthService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final SessionRepository sessionRepository;
+    private final SecretKey secretKey;
 
-    public UserAuthenticationService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserAuthenticationService(
+            UserRepository userRepository,
+            BCryptPasswordEncoder bCryptPasswordEncoder,
+            SecretKey secretKey,
+            SessionRepository sessionRepository
+    ) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.secretKey = secretKey;
+        this.sessionRepository = sessionRepository;
     }
 
     @Override
@@ -56,22 +67,48 @@ public class UserAuthenticationService implements IAuthService {
             throw new WrongPasswordException("Wrong password");
         }
 
+        //check the current time stamp and compare with session and then mark entry as
+        //active or expired: TODO
+
         //JWT Token Generation
-
-        MacAlgorithm algorithm = Jwts.SIG.HS256;
-        SecretKey secretKey = algorithm.key().build();
-
         Map<String, Object> claims = new HashMap<>();
-        Long currentTime = System.currentTimeMillis();
+        long currentTime = System.currentTimeMillis();
         claims.put("iat", currentTime);
         claims.put("exp", currentTime + 2592000);
         claims.put("user_id", foundUser.getId());
         claims.put("issuer", "scaler");
 
-        String jwtToken = Jwts.builder().claims(claims).signWith(secretKey).compact();
+        String jwtToken = Jwts.builder().claims(claims).signWith(this.secretKey).compact();
 
+        Session session = new Session();
+        session.setToken(jwtToken);
+        session.setSessionState(SessionState.ACTIVE);
+        session.setUser(foundUser);
 
-//        String token = foundUser.getEmail() + ":" + foundUser.getPassword();
+        sessionRepository.save(session);
         return jwtToken;
+    }
+
+    @Override
+    public Boolean validateToken(Long userId, String token) {
+        Optional<Session> optionalSession = sessionRepository.findByTokenAndUserId(token, userId);
+
+        if(optionalSession.isEmpty()) {
+            return false;
+        }
+
+        JwtParser jwtParser = Jwts.parser().verifyWith(this.secretKey).build();
+        Claims claims = jwtParser.parseSignedClaims(token).getPayload();
+
+        long expiry = (long)claims.get("exp");
+        long now = System.currentTimeMillis();
+
+        if(now > expiry) {
+            Session session = optionalSession.get();
+            session.setSessionState(SessionState.EXPIRED);
+            sessionRepository.save(session);
+            return false;
+        }
+        return true;
     }
 }

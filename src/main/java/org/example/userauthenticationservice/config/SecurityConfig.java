@@ -1,10 +1,14 @@
 package org.example.userauthenticationservice.config;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.MacAlgorithm;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import javax.crypto.SecretKey;
 
 @Configuration
 public class SecurityConfig {
@@ -19,5 +23,13 @@ public class SecurityConfig {
         httpSecurity.csrf().disable();
         httpSecurity.authorizeHttpRequests(authorizeRequests -> authorizeRequests.anyRequest().permitAll());
         return httpSecurity.build();
+    }
+
+    @Bean
+    SecretKey secretKey () throws Exception {
+        MacAlgorithm algorithm = Jwts.SIG.HS256;
+        SecretKey secretKey = algorithm.key().build();
+
+        return secretKey;
     }
 }

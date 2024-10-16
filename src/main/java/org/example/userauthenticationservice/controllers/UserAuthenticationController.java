@@ -1,9 +1,6 @@
 package org.example.userauthenticationservice.controllers;
 
-import org.example.userauthenticationservice.dto.LoginRequestDTO;
-import org.example.userauthenticationservice.dto.LoginResponseDTO;
-import org.example.userauthenticationservice.dto.SignUpRequestDTO;
-import org.example.userauthenticationservice.dto.SignUpResponseDTO;
+import org.example.userauthenticationservice.dto.*;
 import org.example.userauthenticationservice.models.UserAuthenticationStatus;
 import org.example.userauthenticationservice.services.IAuthService;
 import org.springframework.http.HttpHeaders;
@@ -19,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 public class UserAuthenticationController {
-    private IAuthService userAuthenticationService;
+    private final IAuthService userAuthenticationService;
 
     public UserAuthenticationController(IAuthService userAuthenticationService) {
         this.userAuthenticationService = userAuthenticationService;
@@ -60,5 +57,11 @@ public class UserAuthenticationController {
             responseDTO.setUserAuthenticationStatus(UserAuthenticationStatus.FAILURE);
             return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PostMapping("/validateToken")
+    public ResponseEntity<Boolean> validateToken(@RequestBody ValidateTokenRequestDTO validateTokenRequestDTO) {
+        Boolean isTokenValid = userAuthenticationService.validateToken(validateTokenRequestDTO.getUserId(), validateTokenRequestDTO.getToken());
+        return new ResponseEntity<>(isTokenValid, HttpStatus.OK);
     }
 }
