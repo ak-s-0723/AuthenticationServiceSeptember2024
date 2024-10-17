@@ -8,6 +8,7 @@ import lombok.Setter;
 @Getter
 public class SignUpResponseDto {
 
-    public String email;
-    public boolean success;
+    //public String email;
+    //public boolean success;
+    RequestStatus requestStatus;
 }

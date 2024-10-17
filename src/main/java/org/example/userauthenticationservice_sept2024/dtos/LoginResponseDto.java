@@ -7,6 +7,7 @@ import lombok.Setter;
 @Getter
 public class LoginResponseDto {
 
-    private String token;
-    private boolean success;
+    //private String token;
+    //private boolean success;
+    RequestStatus requestStatus;
 }
