@@ -13,7 +13,7 @@ import java.util.Set;
 
 @Setter
 @Getter
-@Entity
+@Entity(name = "user_data")
 @JsonDeserialize(as = User.class)
 public class User extends BaseModel {
     private String email;

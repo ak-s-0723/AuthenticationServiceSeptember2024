@@ -27,7 +27,8 @@ public class AuthService {
         }
         User user = new User();
         user.setEmail(email);
-        user.setPassword(password);
+        String encodedPassword = passwordEncoder.encode(password);
+        user.setPassword(encodedPassword);
         userRepository.save(user);
         return true;
     }
