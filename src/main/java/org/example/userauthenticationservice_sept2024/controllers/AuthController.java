@@ -40,10 +40,11 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
         LoginResponseDto responseDto = new LoginResponseDto();
-        boolean response = this.authService.login(loginRequestDto.getUsername(), loginRequestDto.getPassword());
-        if(response){
+        String response = this.authService.login(loginRequestDto.getEmail(), loginRequestDto.getPassword());
+        if(response != null){
             responseDto.setRequestStatus(RequestStatus.SUCCESS);
             responseDto.setMessage("Login successful");
+            responseDto.setToken(response);
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         } else throw new RuntimeException("Invalid username or password");
     }

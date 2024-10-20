@@ -25,11 +25,11 @@ public class AuthService {
         userRepository.save(user);
         return true;
     }
-    public boolean login(String email, String password) {
+    public String login(String email, String password) {
         User user = this.userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User with email: " + email + " not found!!!"));
-        if(user.getPassword().equals(password))
-            return true;
-
+        if(user.getPassword().equals(password)) {
+            return user.getEmail() + ":" + user.getPassword();
+        }
         throw new WrongPasswordException("Wrong Password for the email: " + email);
     }
 }

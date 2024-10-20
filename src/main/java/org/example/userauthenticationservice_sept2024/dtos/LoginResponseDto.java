@@ -12,4 +12,5 @@ import lombok.Setter;
 public class LoginResponseDto {
     private RequestStatus requestStatus;
     private String message;
+    private String token;
 }

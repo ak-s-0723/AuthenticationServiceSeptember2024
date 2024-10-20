@@ -4,9 +4,10 @@ spring:
     datasource:
         url: jdbc:mysql://localhost:3306/userdb
         username: root
-        password: mysqlpassword
+        password: Surya@123
         driver-class-name: com.mysql.cj.jdbc.Driver
     jpa:
         hibernate:
             ddl-auto: update
+        database-platform: org.hibernate.dialect.MySQLDialect
 
