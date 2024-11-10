@@ -65,16 +65,16 @@ public class AuthService {
         userRepository.save(user);
 
         //sending email logic
-        try {
-            EmailDto emailDto = new EmailDto();
-            emailDto.setTo(email);
-            emailDto.setFrom("anuragbatch@gmail.com");
-            emailDto.setSubject("Welcome to Scaler !!");
-            emailDto.setBody("Hope you have great stay.");
-            kafkaProducerClient.sendMessage("signup", objectMapper.writeValueAsString(emailDto));
-        }catch (JsonProcessingException exception) {
-            throw new RuntimeException(exception.getMessage());
-        }
+//        try {
+//            EmailDto emailDto = new EmailDto();
+//            emailDto.setTo(email);
+//            emailDto.setFrom("anuragbatch@gmail.com");
+//            emailDto.setSubject("Welcome to Scaler !!");
+//            emailDto.setBody("Hope you have great stay.");
+//            kafkaProducerClient.sendMessage("signup", objectMapper.writeValueAsString(emailDto));
+//        }catch (JsonProcessingException exception) {
+//            throw new RuntimeException(exception.getMessage());
+//        }
 
 
         return true;
